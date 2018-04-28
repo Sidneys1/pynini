@@ -1,3 +1,5 @@
+import copy
+
 def parent_scope(parent_cls):
     def inner(cls):
         cls.add_parent_scope(parent_cls)
@@ -26,6 +28,11 @@ class Scope(object):
         cls.PARENT_SCOPES.append(pscope)
 
     def add_object(self, obj):
+        if hasattr(self, 'PARE'):
+            obj = copy.deepcopy(obj)
+            for key in getattr(self, 'PARE'):
+                del obj[key]
+
         scopes = self.get_subscopes()
         added = False
         for subscope in scopes:
@@ -96,7 +103,9 @@ class Scope(object):
     def as_dict(self):
         ret = {}
         if self.__ownobjs:
-            ret['objs'] = self.__ownobjs
+            ''' UNCOMMENT LATER '''
+            # ret['objs'] = self.__ownobjs
+            pass
         if self.__bins:
             ret.update({
                 k.__name__: {
@@ -156,7 +165,12 @@ class Scope(object):
             if k not in ret:
                 ret[k] = set() if use_set else []
             if use_set:
-                ret[k].add(v)
+                try:
+                    ret[k].add(v)
+                except:
+                    ''' UNCOMMENT LATER '''
+                    pass
+                    # ret[k].add(str(v))
             else:
                 ret[k].append(v)
         if use_set:
